@@ -11,6 +11,7 @@ import { Label } from "~/components/label";
 import type { action as ClipActionApi } from "./api.clip.$id";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import type { ApiResult } from "~/lib/api-result";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const { headers } = await requireUser(request);
@@ -44,15 +45,15 @@ export function EditClip({
   clip: Clip;
   mediaBaseUrl: string;
 }) {
-  const fetcher = useFetcher<typeof ClipActionApi>();
+  const fetcher = useFetcher();
   const { state, data: fetcherData } = fetcher;
   const busy = state !== "idle";
 
   useEffect(() => {
     if (!fetcher.data) return;
-    const { ok } = fetcher.data;
+    const { success } = fetcher.data as ApiResult<null>;
 
-    if (ok) {
+    if (success) {
       toast("Clip has been updated.");
     } else {
       toast.error("An error occurred while updating the clip.");

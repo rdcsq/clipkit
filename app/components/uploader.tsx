@@ -5,6 +5,7 @@ import type { CreateUploadResult } from "~/lib/schemas";
 import { toast } from "sonner";
 import { Spinner } from "./spinner";
 import { refreshClipsEvent } from "~/lib/events";
+import type { ApiResult } from "~/lib/api-result";
 
 export function UploadButton({ baseUrl }: { baseUrl: string }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -17,18 +18,24 @@ export function UploadButton({ baseUrl }: { baseUrl: string }) {
     if (!files || files.length != 1) return;
     const [file] = files;
     const req = await ky
-      .post<CreateUploadResult>(`${baseUrl}/api/uploads/create`, {
+      .post<ApiResult<CreateUploadResult>>(`${baseUrl}/api/uploads/create`, {
         json: {
           fileName: file.name,
         },
       })
       .json();
-    await ky.put(req.url, {
+    if (!req.success) {
+      toast.error(req.errorMessage)
+      return
+    }
+    
+    await ky.put(req.data.url, {
       body: file,
     });
-    const res = await ky.post(`${baseUrl}/api/uploads/${req.id}/finish`);
+    
+    const res = await ky.post<ApiResult>(`${baseUrl}/api/uploads/${req.data.id}/finish`).json();
     setBusy(false);
-    if (!res.ok) {
+    if (!res.success) {
       toast.error("An error occurred uploding the clip.");
       return;
     }

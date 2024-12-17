@@ -1,12 +1,20 @@
 import { requireUser } from "~/.server/auth-remix";
 import type { Route } from "./+types/api.clip.$id";
 import { clipsService } from "~/.server";
+import type { ApiResult } from "~/lib/api-result";
+import type { Clip } from "~/.server/index.types";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const clip = await clipsService.querySingle(params.id);
-  return Response.json(clip ?? null, {
-    status: clip !== undefined ? 200 : 400,
-  });
+
+  if (!clip) {
+    return Response.json({ success: false }, { status: 400 });
+  }
+
+  return Response.json({
+    success: true,
+    data: clip,
+  } as ApiResult<Clip>);
 }
 
 export async function action(data: Route.ActionArgs) {
@@ -24,7 +32,9 @@ async function deleteAction({ request, params }: Route.ActionArgs) {
   const { userId, headers } = await requireUser(request);
   const ok = await clipsService.deleteOrCleanup(params.id, userId);
   return Response.json(
-    { ok },
+    {
+      success: ok,
+    } as ApiResult<undefined>,
     {
       status: ok ? 200 : 400,
       headers,

@@ -15,6 +15,7 @@ import { Button } from "~/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { refreshClipsEventKey } from "~/lib/events";
+import type { ApiResult } from "~/lib/api-result";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { userId, headers } = await requireUser(request);
@@ -107,19 +108,19 @@ function DeleteDialog({
   data: DeleteDialogData | null;
   dismiss: () => void;
 }) {
-  const fetcher = useFetcher<typeof ApiClipAction>();
+  const fetcher = useFetcher();
   const { state, data: fetcherData } = fetcher;
   const busy = state !== "idle";
 
   useEffect(() => {
     if (!fetcher.data) return;
-    const { ok } = fetcher.data;
+    const res = fetcher.data as ApiResult;
 
-    if (ok) {
+    if (res.success) {
       toast("Clip has been deleted.");
       dismiss();
     } else {
-      toast.error("An error occurred while deleting the clip.");
+      toast.error(res.errorMessage);
     }
   }, [fetcherData]);
 

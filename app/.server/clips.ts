@@ -4,7 +4,7 @@ import type { MediaProcessorService } from "./media-processor";
 import type { S3Service } from "./s3";
 import { customAlphabet } from "nanoid";
 import type { Clip, ClipStatus } from "./index.types";
-import type { updateClipSchema } from "~/lib/schemas";
+import type { CreateUploadResult, updateClipSchema } from "~/lib/schemas";
 import type { z } from "zod";
 
 const nanoid = customAlphabet("1234567890abcdefhijklmnopqrstuvwxyz", 10);
@@ -46,7 +46,7 @@ export class ClipsService {
   async generateUpload(
     userId: number,
     fileName: string
-  ): Promise<GenerateUploadResult> {
+  ): Promise<CreateUploadResult> {
     const id = nanoid();
     const separator = fileName.lastIndexOf(".");
     const name = fileName.substring(0, separator);
@@ -129,11 +129,6 @@ type QueryVideoUrl = {
   uploaderUserId: number;
   videoExtension: string;
   status: ClipStatus;
-};
-
-type GenerateUploadResult = {
-  id: string;
-  url: string;
 };
 
 type DeleteOrCleanupQuery = {

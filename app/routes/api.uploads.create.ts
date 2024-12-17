@@ -1,8 +1,10 @@
 import { requireUser } from "~/.server/auth-remix";
 import type { Route } from "./+types/api.uploads.create";
-import { createUploadSchema } from "~/lib/schemas";
+import { createUploadSchema, type CreateUploadResult } from "~/lib/schemas";
 import { data } from "react-router";
 import { clipsService } from "~/.server";
+import { parseBody } from "~/lib/request-utils";
+import type { ApiResult } from "~/lib/api-result";
 
 export async function action({ request }: Route.ActionArgs) {
   if (request.method !== "POST") {
@@ -10,20 +12,15 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const { userId, headers } = await requireUser(request);
-  let jsonReq: Record<string, any>;
-  try {
-    jsonReq = await request.json();
-  } catch {
-    throw Response.json({ error: "Invalid body" }, { status: 400 });
-  }
-  const validationRes = await createUploadSchema.safeParseAsync(jsonReq);
-  if (!validationRes.success) {
-    throw Response.json({ error: "Invalid file name." }, { status: 400 });
-  }
-
-  const res = await clipsService.generateUpload(
-    userId,
-    validationRes.data.fileName
+  const body = await parseBody(
+    request,
+    (obj) => createUploadSchema.parse(obj),
+    headers
   );
-  return Response.json(res, { headers });
+
+  const res = await clipsService.generateUpload(userId, body.fileName);
+  return Response.json({
+    success: true,
+    data: res
+  } satisfies ApiResult<CreateUploadResult>, { headers });
 }
