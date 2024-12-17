@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-background: 0deg 0% 100%;
+  --color-foreground: 0deg 0% 0%;
+  --color-primary: 258deg 90% 66%; /* violet 500 */
+  --color-on-primary:  0deg 0% 100%;
+  --color-border: 240deg 6% 90%; /* zinc 200 */
+  --color-error: 360deg 84% 60%; /* red 500 */
+  --color-on-error: 0deg 0% 100%;
+  --color-destructive: var(--color-error);
+  --color-on-destructive: var(--color-on-error);
+
+  font-family: Inter, sans-serif;
+  font-feature-settings: "ss02" 1;
+}
+
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: InterVariable, sans-serif;
+  }
+}
+
+.loader {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid hsl(var(--color-foreground));
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
