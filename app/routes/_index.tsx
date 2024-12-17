@@ -1,4 +1,14 @@
 import { Button } from "~/components/ui/button";
+import type { Route } from "./+types/_index";
+import { getUser } from "~/.server/auth-remix";
+import { redirect } from "react-router";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await getUser(request);
+  if (user) {
+    throw redirect("/app", { headers: user.headers });
+  }
+}
 
 export default function Page() {
   return (
