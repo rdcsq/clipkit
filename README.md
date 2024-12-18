@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="./app/assets/icon.svg" height="40" style="margin-top: 8px;"/>
+  <img src="./app/assets/icon.svg" height="40" />
 </p>
 
-<h1 style="text-align: center; margin-top: -12px;">clipkit</h1>
-<p style="text-align: center;">a video sharing website made</p>
+<h1 align="center">clipkit</h1>
+<p align="center">a video sharing website made</p>
 
 ![preview of the website, showing the main dashboard, the video page and a discord preview](./art/banner.webp)
 
