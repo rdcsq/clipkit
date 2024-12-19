@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">clipkit</h1>
-<p align="center">a video sharing website made</p>
+<p align="center">a video sharing website</p>
 
 ![preview of the website, showing the main dashboard, the video page and a discord preview](./art/banner.webp)
 
