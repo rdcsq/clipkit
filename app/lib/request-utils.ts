@@ -13,8 +13,8 @@ export async function parseBody<T>(
   request: Request,
   parse: (obj: Record<string, any>) => T,
   optionalHeaders?: [string, string][]
-): Promise<T> {
-  let body: Record<string, any> = {}
+): Promise<ParseBody<T>> {
+  let body: Record<string, any> = {};
 
   switch (request.headers.get("Content-Type")) {
     case "application/json": {
@@ -33,19 +33,31 @@ export async function parseBody<T>(
   }
 
   try {
-    return parse(body);
+    return { data: parse(body) };
   } catch (e) {
     if (e instanceof ZodError) {
       const errors = transformZodError(e);
-      throw Response.json(
-        {
-          success: false,
-          bodyErrors: errors,
-          errorMessage: "Please verify the fields you've provided."
-        } satisfies ApiResult<undefined>,
-        { status: 400, headers: optionalHeaders }
-      );
+      return {
+        error: Response.json(
+          {
+            success: false,
+            bodyErrors: errors,
+            errorMessage: Object.values(errors)[0],
+          } satisfies ApiResult<undefined>,
+          { status: 400, headers: optionalHeaders }
+        ),
+      };
     }
     throw e;
   }
 }
+
+type ParseBody<T> =
+  | {
+      data?: never;
+      error: Response;
+    }
+  | {
+      error?: never;
+      data: T;
+    };

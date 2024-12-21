@@ -5,6 +5,7 @@ import { ClipsService } from "./clips";
 import type { RuntimeConfigS3 } from "./index.types";
 import { S3Service } from "./s3";
 import { MediaProcessorService } from "./media-processor";
+import { AccountsService } from "./accounts";
 
 export const runtimeConfig = {
   discord: {
@@ -36,7 +37,9 @@ export const discord = new Discord(
   `${runtimeConfig.baseUrl}/auth/discord/callback`
 );
 
-export const sql = postgres(runtimeConfig.databaseUrl, { transform: postgres.toCamel });
+export const sql = postgres(runtimeConfig.databaseUrl, {
+  transform: postgres.toCamel,
+});
 export type PgDb = typeof sql;
 
 export const authService = new AuthService(
@@ -55,3 +58,4 @@ export const clipsService = new ClipsService(
   storageService,
   mediaProcessor
 );
+export const accountsService = new AccountsService(sql);
