@@ -40,7 +40,6 @@ export default function Page({ loaderData }: Route.ComponentProps) {
   const [isOpenDeleteDialog, setOpenDeleteDialog] = useState(false);
   const revalidator = useRevalidator();
 
-  const intersectionDiv = useRef<HTMLDivElement | null>(null)
   const [continueLoading, setContinueLoading] = useState(true);
 
   async function load() {
@@ -80,21 +79,6 @@ export default function Page({ loaderData }: Route.ComponentProps) {
       document.removeEventListener(refreshClipsEventKey, refreshClips);
     };
   }, []);
-
-  async function loadWhileInScreen() {
-    console.log(`client height: ${intersectionDiv.current!.offsetHeight} - innerheight : ${window.innerHeight}`)
-    if (intersectionDiv.current!.offsetHeight < window.innerHeight) {
-      console.log('loading because its offscren')
-      await load();
-    }
-    console.log(`client height: ${intersectionDiv.current!.offsetHeight} - innerheight : ${window.innerHeight}`)
-    await new Promise((resolve) => setTimeout(resolve, 200))
-    // loadWhileInScreen()
-  }
-
-  useEffect(() => {
-    // loadWhileInScreen()
-  }, [intersectionDiv])
 
   function refreshClips() {
     revalidator.revalidate();
@@ -149,9 +133,8 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             }
           }}
           initialInView={false}
-        >
-          <div ref={intersectionDiv} className="h-10" />
-        </InView>
+          className="h-10"
+        />
       )}
       <DeleteDialog
         open={isOpenDeleteDialog}
