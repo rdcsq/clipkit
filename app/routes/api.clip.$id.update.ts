@@ -10,7 +10,10 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const { userId, headers } = await requireUser(request);
   const body = await parseBody(request, (obj) => updateClipSchema.parse(obj), headers);
-  const ok = await clipsService.update(params.id, body, userId);
+  if (!body.data) {
+    return body.error;
+  }
+  const ok = await clipsService.update(params.id, body.data, userId);
 
   if (!ok) {
     return Response.json(

@@ -17,8 +17,11 @@ export async function action({ request }: Route.ActionArgs) {
     (obj) => createUploadSchema.parse(obj),
     headers
   );
+  if(!body.data) {
+    return body.error;
+  }
 
-  const res = await clipsService.generateUpload(userId, body.fileName);
+  const res = await clipsService.generateUpload(userId, body.data.fileName);
   return Response.json({
     success: true,
     data: res
