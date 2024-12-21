@@ -3,8 +3,8 @@ import { type PgDb } from ".";
 import type { MediaProcessorService } from "./media-processor";
 import type { S3Service } from "./s3";
 import { customAlphabet } from "nanoid";
-import type { Clip, ClipStatus } from "./index.types";
-import type { CreateUploadResult, updateClipSchema } from "~/lib/schemas";
+import type { Clip } from "./index.types";
+import type { ClipItem, ClipStatus, CreateUploadResult, updateClipSchema } from "~/lib/schemas";
 import type { z } from "zod";
 
 const nanoid = customAlphabet("1234567890abcdefhijklmnopqrstuvwxyz", 10);
@@ -26,7 +26,7 @@ export class ClipsService {
     return clip;
   }
 
-  async listPaginated(userId: number, limit: number, separatorId: string = "") {
+  async listPaginated(userId: number, limit: number, separatorId: string = ""): Promise<ClipItem[]> {
     return await this.sql<ClipItem[]>`
       select id, uploader_user_id, title, status, created_at
       from clips
@@ -116,14 +116,6 @@ export class ClipsService {
     return query !== undefined
   }
 }
-
-type ClipItem = {
-  id: string;
-  uploaderUserId: number;
-  title: string;
-  status: ClipStatus;
-  createdAt: Date;
-};
 
 type QueryVideoUrl = {
   uploaderUserId: number;

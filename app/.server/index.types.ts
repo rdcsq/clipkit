@@ -1,3 +1,5 @@
+import type { ClipStatus } from "~/lib/schemas";
+
 export type RuntimeConfigS3 = {
   publicUrl: string;
   usePathStyleUrls: boolean;
@@ -17,5 +19,3 @@ export type Clip = {
   status: ClipStatus;
   createdAt: Date;
 };
-
-export type ClipStatus = "available" | "removed" | "uploading";

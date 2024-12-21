@@ -15,11 +15,17 @@ export const updateClipSchema = z.object({
 });
 
 export const updateUsernameSchema = z.object({
-  username: z
-    .string()
-    .min(1)
-    .max(64)
-    .regex(/^\w+$/, {
-      message: "Username can only contain letters, numbers and underscores.",
-    }),
+  username: z.string().min(1).max(64).regex(/^\w+$/, {
+    message: "Username can only contain letters, numbers and underscores.",
+  }),
 });
+
+export type ClipStatus = "available" | "removed" | "uploading";
+
+export type ClipItem = {
+  id: string;
+  uploaderUserId: number;
+  title: string;
+  status: ClipStatus;
+  createdAt: Date;
+};
